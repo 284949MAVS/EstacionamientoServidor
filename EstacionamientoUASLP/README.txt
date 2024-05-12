@@ -1,0 +1,3 @@
+-El archivo que se debe modificar es el que se llama "conexion.php"
+-PHP v8.0.30
+-La base de datos se llama "estacionamientobd.sql"
