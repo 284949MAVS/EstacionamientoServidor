@@ -191,11 +191,11 @@ include "./mandar_precios.php";
           </div>
           <div class="mb-3">
             <label for="newPassword" class="form-label">Nueva contraseña:</label>
-            <input type="password" class="form-control" id="newPassword" required>
+            <input type="password" class="form-control" id="newPassword" title="La contraseña debe tener 12 caracteres incluidos letras, un número y un caracter especial" pattern="^(?=.*\d)(?=.*[!@#$%^&*])[\w!@#$%^&*]{12}$" maxlength="12" required>
           </div>
           <div class="mb-3">
             <label for="confirmNewPassword" class="form-label">Confirmar nueva contraseña:</label>
-            <input type="password" class="form-control" id="confirmNewPassword" required>
+            <input type="password" class="form-control" id="confirmNewPassword" title="La contraseña debe tener 12 caracteres incluidos letras, un número y un caracter especial" pattern="^(?=.*\d)(?=.*[!@#$%^&*])[\w!@#$%^&*]{12}$" maxlength="12" required>
           </div>
           <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
         </form>
@@ -935,7 +935,7 @@ function generateTableRows(data) {
       },
       success: function(response) {
         // Manejar la respuesta del servidor
-        if (response.success) {
+        if (response.success=true) {
           // Contraseña cambiada con éxito
           alert("Contraseña cambiada con éxito.");
           $("#changePasswordModal").modal('hide'); // Ocultar el modal

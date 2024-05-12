@@ -163,10 +163,6 @@ if (!isset($_SESSION['nom_User'])) {
                 <input type="text" class="form-control" id="efectivo" readonly>
             </div>
             <div class="form-row">
-                <label for="depositos">Depósitos:</label>
-                <input type="text" class="form-control" id="depositos" readonly>
-            </div>
-            <div class="form-row">
                 <label for="totalCorte">Total de Corte:</label>
                 <input type="text" class="form-control" id="totalCorte" readonly>
             </div>

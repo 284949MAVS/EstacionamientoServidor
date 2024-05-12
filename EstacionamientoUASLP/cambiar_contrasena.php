@@ -21,9 +21,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["currentPassword"]) && 
     // Verificar si la contraseña actual proporcionada coincide con la contraseña almacenada
     if ($currentPassword==$storedPassword) {
         // La contraseña actual es correcta, actualizar la contraseña en la base de datos
-        $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $hashedNewPassword = $newPassword;
         $updateStmt = $mysqli->prepare("UPDATE usuarios SET pass_User = ? WHERE tipo_User=1"); // Cambia 'users' por el nombre de tu tabla de usuarios
-        $updateStmt->bind_param("s", $hashedNewPassword); // Cambia 'userId' por el nombre de la variable que contiene el ID del usuario
+        $updateStmt->bind_param("s", $hashedNewPassword);
         $updateStmt->execute();
 
         // Verificar si la actualización fue exitosa

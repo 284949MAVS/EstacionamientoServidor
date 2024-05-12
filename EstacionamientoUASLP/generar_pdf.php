@@ -69,7 +69,6 @@ $pdf->Cell(40, 2, utf8_decode('Inicio de Turno: ' . $inicioTurno), 0, 1, 'C');
 $pdf->Cell(40, 2, utf8_decode('Fin de Turno: ' . $finTurno), 0, 1, 'C');
 $pdf->Cell(40, 2, utf8_decode('Tickets Cancelados: ' . $ticketsCancelados), 0, 1, 'C');
 $pdf->Cell(40, 2, utf8_decode('Efectivo: ' . $efectivo), 0, 1, 'C');
-$pdf->Cell(40, 2, utf8_decode('Depósitos: ' . $depositos), 0, 1, 'C');
 $pdf->Cell(40, 2, utf8_decode('Total de Corte: $' . $totalCorte), 0, 1, 'C');
 $pdf->Cell(40, 2, utf8_decode('_________________________________________________'), 0, 1, 'C');
 $pdf->Cell(40, 2, utf8_decode('DETALLE'), 0, 1, 'C');
