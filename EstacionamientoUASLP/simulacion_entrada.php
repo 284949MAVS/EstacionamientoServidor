@@ -140,7 +140,7 @@ if (!isset($_SESSION['nom_User'])) {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="procesar_entrada.php" method="post">
+                    <form action="./procesar_entrada.php" method="post">
                         <div class="form-group">
                             <label for="clave<?= $i ?>">Clave:</label>
                             <input type="numeric" class="form-control clave-input" pattern="[0-9]{6}" title="Proporcione un identificador único de 6 dígitos" maxlength="6" required placeholder="ejemplo: 111111" id="clave<?= $i ?>" name="clave" required>
@@ -149,7 +149,7 @@ if (!isset($_SESSION['nom_User'])) {
                         <button type="submit" class="btn btn-primary">Entrada</button>
                     </form>
 
-                    <form action="procesar_salida.php" method="post">
+                    <form action="./procesar_salida.php" method="post">
                         <div class="form-group mt-3">
                             <label for="clave_salida<?= $i ?>">Clave:</label>
                             <input type="numeric" class="form-control clave-input" pattern="[0-9]{6}" title="Proporcione un identificador único de 6 dígitos" maxlength="6" required placeholder="ejemplo: 111111" id="clave_salida<?= $i ?>" name="clave" required>
