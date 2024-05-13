@@ -37,10 +37,13 @@ unset($_SESSION['formulario_enviado']);
 ?>
 
 <?php
-// Función para obtener los tickets activos
-function obtenerTicketsActivos($mysqli) {
-    // Consulta para obtener los tickets activos (status = 1)
-    $result = $mysqli->query("SELECT id_Ticket FROM tickets WHERE status = 1");
+// Función para obtener los tickets activos con paginación
+function obtenerTicketsActivos($mysqli, $pagina = 1, $porPagina = 5) {
+    // Calcular el índice de inicio
+    $inicio = ($pagina - 1) * $porPagina;
+    
+    // Consulta para obtener los tickets activos (status = 1) para la página actual
+    $result = $mysqli->query("SELECT id_Ticket FROM tickets WHERE status = 1 LIMIT $inicio, $porPagina");
 
     $ticketsActivos = array();
 
@@ -57,8 +60,10 @@ function obtenerTicketsActivos($mysqli) {
     return $ticketsActivos;
 }
 
-// Llamar a la función para obtener los tickets activos
-$tickets = obtenerTicketsActivos($mysqli);
+// Llamar a la función para obtener los tickets activos en la página actual
+$pagina = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
+$ticketsPorPagina = 5;
+$tickets = obtenerTicketsActivos($mysqli, $pagina, $ticketsPorPagina);
 ?>
 
 <!DOCTYPE html>
@@ -235,62 +240,128 @@ $tickets = obtenerTicketsActivos($mysqli);
     <br>
 
     <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <!-- Tarjeta de tickets -->
-            <div class="card" style="border:1px solid #004A98; width: 400px; height: 400px; left: 150px">
-                <div class="card-header" style="background-color:#004A98;">
-                    <h5 class="card-title" style="color: #ffffff; font-size:bold;">Tickets <i class="fa-solid fa-ticket"></i></h5>
-                </div>
-                <div class="card " style="background-color: #ffffff; height: 100px; align-items:center; width:200px; justify-content:center;margin:auto; margin-top:10px;border:hidden; ">
-                <div class="card-body ">
-                    <form id="ticketForm" method="POST">
-                        <button type="button" name="registrar_ticket" class="btn btn-primary b" onclick="registrarTicket(); return false;">
-                            <i class="fas fa-file-alt fa-2x mr-2" style="margin-rigth:10px"></i>  Generar Ticket
-                        </button>
-                     </form>
-                </div>
-                </div>
-                
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <!-- Tarjeta de tickets -->
+                <div class="card" style="border:1px solid #004A98; width: 400px; height: 400px; left: 150px">
+                    <div class="card-header" style="background-color:#004A98;">
+                        <h5 class="card-title" style="color: #ffffff; font-size:bold;">Tickets <i class="fa-solid fa-ticket"></i></h5>
+                    </div>
+                    <div class="card " style="background-color: #ffffff; height: 100px; align-items:center; width:200px; justify-content:center;margin:auto; margin-top:10px;border:hidden; ">
+                        <div class="card-body ">
+                            <form id="ticketForm" method="POST">
+                                <button type="button" name="registrar_ticket" class="btn btn-primary b" onclick="registrarTicket(); return false;">
+                                    <i class="fas fa-file-alt fa-2x mr-2" style="margin-rigth:10px"></i>  Generar Ticket
+                                </button>
+                            </form>
+                        </div>
+                    </div>
 
-                <div class="card" style="background-color: #ffffff; height: 100px;align-items:center; width:200px; justify-content:center;margin:auto; margin-top:10px; border:hidden;">
-                <div class="card-body">
-                    <button name="cobro" class="btn btn-success b" id="cobro" data-toggle="modal" data-target="#cobroModal">
-                        <i class="fas fa-check-circle fa-2x"></i> Pagar ticket
-                    </button>
-                </div>
-                </div>
 
-                <div class="card" style="background-color: #ffffff; height: 100px;align-items:center; width:200px; justify-content:center;margin:auto; margin-top:10px; margin-bottom:10px; border:hidden;">
-                <div class="card-body">
-                    <button name="cancelar" class="btn btn-danger b" id="cancelar" data-toggle="modal" data-target="#passwordModal">
-                    <i class="fa-solid fa-ban fa-2x"></i> Cancelar ticket
-                    </button>
+                    <div class="card" style="background-color: #ffffff; height: 100px;align-items:center; width:200px; justify-content:center;margin:auto; margin-top:10px; border:hidden;">
+                        <div class="card-body">
+                            <button name="cobro" class="btn btn-success b" id="cobro" data-toggle="modal" data-target="#cobroModal">
+                                <i class="fas fa-check-circle fa-2x"></i> Pagar ticket
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card" style="background-color: #ffffff; height: 100px;align-items:center; width:200px; justify-content:center;margin:auto; margin-top:10px; margin-bottom:10px; border:hidden;">
+                        <div class="card-body">
+                            <button name="cancelar" class="btn btn-danger b" id="cancelar" data-toggle="modal" data-target="#passwordModal">
+                                <i class="fa-solid fa-ban fa-2x"></i> Cancelar ticket
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
-                </div>
-                
             </div>
-           
-        </div>
-        <div class="col-md-6">
-            <!-- Tarjeta de tarifas -->
-            <div class="card" style="border:1px solid #004A98; right: 0px;">
-                <div class="card-header" style="background-color:#004A98;">
-                    <h5 class="card-title" style="color: #ffffff; font-size:bold;">Tarifas <i class="fa-solid fa-sack-dollar"></i></h5>
-                </div>
-                <div class="card-body">
-                    <!-- Contenido de la tarjeta de tarifas -->
-                    
-                    <p class="card-text"><span style="font-weight:bold;"> Comunidad Universitaria:</span> $10 por hora</p>
-                    <p class="card-text"><span style="font-weight:bold;">Público en general:</span> $12 por cada hora </p>
-                    <br>
-                    <p class= "card-text" style="font-weight:bold; text-align:center;">Nota: las horas subsecuentes para la comunidad universitaria se cobrarán $5 por cada una.</p>
+            <div class="col-md-6">
+                <div class="row justify-content-center">
+                    <!-- Tarjeta de tarifas -->
+                    <div class="col-md-12">
+                        <div class="card" style="border:1px solid #004A98; right: 0px;">
+                            <div class="card-header" style="background-color:#004A98;">
+                                <h5 class="card-title" style="color: #ffffff; font-size:bold;">Tarifas <i class="fa-solid fa-sack-dollar"></i></h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Contenido de la tarjeta de tarifas -->
+                                <p class="card-text"><span style="font-weight:bold;"> Comunidad Universitaria:</span> $10 por hora</p>
+                                <p class="card-text"><span style="font-weight:bold;">Público en general:</span> $12 por cada hora </p>
+                                <br>
+                                <p class= "card-text" style="font-weight:bold; text-align:center;">Nota: las horas subsecuentes para la comunidad universitaria se cobrarán $5 por cada una.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Nueva tarjeta -->
+                    <div class="col-md-12">
+                        <div class="card" style="border:1px solid #004A98;">
+                            <div class="card-header" style="background-color:#004A98;">
+                                <h5 class="card-title" style="color: #ffffff; font-size:bold;">Tickets activos</h5>
+                            </div>
+                            <div class="card-body">
+                            <div id="activeTickets" style="margin-top: 10px;">
+                                    <ul>
+                                        <?php
+                                        // Iterar sobre los tickets activos y mostrarlos en una lista
+                                        foreach ($tickets as $ticket) {
+                                            echo "<li>{$ticket['id_Ticket']}</li>";
+                                        }
+                                        ?>
+                                    </ul>
+                                    <!-- Botones de paginación -->
+                                    <?php
+                                        // Calcular el número total de páginas
+                                        $result = $mysqli->query("SELECT COUNT(*) AS total FROM tickets WHERE status = 1");
+                                        $totalRegistros = $result->fetch_assoc()['total'];
+                                        $totalPaginas = ceil($totalRegistros / $ticketsPorPagina);
+
+                                        // Definir cuántas páginas mostrar antes y después de la página actual
+                                        $paginasMostradas = 2; // Puedes ajustar este valor según tus necesidades
+
+                                        // Calcular el rango de páginas a mostrar
+                                        $inicio = max(1, $pagina - $paginasMostradas);
+                                        $fin = min($totalPaginas, $pagina + $paginasMostradas);
+
+                                        // Mostrar botones de paginación si hay más de una página
+                                        if ($totalPaginas > 1) {
+                                            echo "<div class='text-center'>";
+                                            echo "<ul class='pagination'>";
+                                            if ($pagina > 1) {
+                                                echo "<li class='page-item'><a class='page-link' id='previousPage' href='?pagina=" . ($pagina - 1) . "'>Anterior</a></li>";
+                                            }
+                                            if ($inicio > 1) {
+                                                echo "<li class='page-item'><a class='page-link pageButton' href='?pagina=1'>1</a></li>";
+                                                if ($inicio > 2) {
+                                                    echo "<li class='page-item'><span class='page-link'>...</span></li>";
+                                                }
+                                            }
+                                            for ($i = $inicio; $i <= $fin; $i++) {
+                                                echo "<li class='page-item " . ($pagina == $i ? 'active' : '') . "'><a class='page-link pageButton' href='?pagina=$i'>$i</a></li>";
+                                            }
+                                            if ($fin < $totalPaginas) {
+                                                if ($fin < $totalPaginas - 1) {
+                                                    echo "<li class='page-item'><span class='page-link'>...</span></li>";
+                                                }
+                                                echo "<li class='page-item'><a class='page-link pageButton' href='?pagina=$totalPaginas'>$totalPaginas</a></li>";
+                                            }
+                                            if ($pagina < $totalPaginas) {
+                                                echo "<li class='page-item'><a class='page-link' id='nextPage' href='?pagina=" . ($pagina + 1) . "'>Siguiente</a></li>";
+                                            }
+                                            echo "</ul>";
+                                            echo "</div>";
+                                        }
+                                    ?>
+                                </div>
+                            </div>
+                                
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
 </main>
 
 <!-- Primer Modal para ingresar ID del ticket -->
@@ -305,17 +376,7 @@ $tickets = obtenerTicketsActivos($mysqli);
             <div class="modal-body">
                 <input type="text" id="idticket" class="form-control" placeholder="ID" required>
                 <!-- Div para mostrar los tickets activos -->
-                <div id="activeTickets" style="margin-top: 10px;">
-                    <h4>Tickets activos:</h4>
-                    <ul>
-                        <?php
-                        // Iterar sobre los tickets activos y mostrarlos en una lista
-                        foreach ($tickets as $ticket) {
-                            echo "<li>{$ticket['id_Ticket']}</li>";
-                        }
-                        ?>
-                    </ul>
-                </div>
+            
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
