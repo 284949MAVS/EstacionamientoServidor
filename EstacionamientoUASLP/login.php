@@ -9,27 +9,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     require_once "./conexion.php";
 
-    $query = "SELECT * FROM usuarios WHERE id_User = '$username' AND pass_User = '$password'";
-    $result = $mysqli->query($query);
+    // Utilizar sentencias preparadas para evitar la inyección SQL
+    $query = "SELECT * FROM usuarios WHERE id_User = ? AND pass_User = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
         $nombre = $row["nom_User"];
-        $id =$row["id_User"];
+        $id = $row["id_User"];
         $_SESSION["nom_User"] = $nombre;
-        $_SESSION["id_User"]= $id;
+        $_SESSION["id_User"] = $id;
         if ($row["tipo_User"] == 1) {
             header("Location: ./inicio.php");
         } else {
             header("Location: ./inicio_caseta.php");
         }
-
         exit(); 
     } else {
         header("Location: ./loginPague.php?error=incorrecto");
         exit(); 
     }
 
+    // Cerrar la conexión
+    $stmt->close();
     $mysqli->close();
 }
 ?>
