@@ -295,63 +295,68 @@ $tickets = obtenerTicketsActivos($mysqli, $pagina, $ticketsPorPagina);
                     </div>
                     <!-- Nueva tarjeta -->
                     <div class="col-md-12">
-                        <div class="card" style="border:1px solid #004A98;">
-                            <div class="card-header" style="background-color:#004A98;">
-                                <h5 class="card-title" style="color: #ffffff; font-size:bold;">Tickets activos</h5>
-                            </div>
-                            <div class="card-body">
-                            <div id="activeTickets" style="margin-top: 10px;">
-                                    <ul>
+                                <div class="card" style="border:1px solid #004A98;">
+                                    <div class="card-header" style="background-color:#004A98;">
+                                        <h5 class="card-title" style="color: #ffffff; font-size:bold;">Tickets activos</h5>
+                                    </div>
+                                    <div class="card-body">
                                         <?php
-                                        // Iterar sobre los tickets activos y mostrarlos en una lista
-                                        foreach ($tickets as $ticket) {
-                                            echo "<li>{$ticket['id_Ticket']}</li>";
-                                        }
-                                        ?>
-                                    </ul>
-                                    <!-- Botones de paginación -->
-                                    <?php
-                                        // Calcular el número total de páginas
-                                        $result = $mysqli->query("SELECT COUNT(*) AS total FROM tickets WHERE status = 1");
-                                        $totalRegistros = $result->fetch_assoc()['total'];
-                                        $totalPaginas = ceil($totalRegistros / $ticketsPorPagina);
-
-                                        // Definir cuántas páginas mostrar antes y después de la página actual
-                                        $paginasMostradas = 2; // Puedes ajustar este valor según tus necesidades
-
-                                        // Calcular el rango de páginas a mostrar
-                                        $inicio = max(1, $pagina - $paginasMostradas);
-                                        $fin = min($totalPaginas, $pagina + $paginasMostradas);
-
-                                        // Mostrar botones de paginación si hay más de una página
-                                        if ($totalPaginas > 1) {
-                                            echo "<div class='text-center'>";
-                                            echo "<ul class='pagination'>";
-                                            if ($pagina > 1) {
-                                                echo "<li class='page-item'><a class='page-link' id='previousPage' href='?pagina=" . ($pagina - 1) . "'>Anterior</a></li>";
-                                            }
-                                            if ($inicio > 1) {
-                                                echo "<li class='page-item'><a class='page-link pageButton' href='?pagina=1'>1</a></li>";
-                                                if ($inicio > 2) {
-                                                    echo "<li class='page-item'><span class='page-link'>...</span></li>";
-                                                }
-                                            }
-                                            for ($i = $inicio; $i <= $fin; $i++) {
-                                                echo "<li class='page-item " . ($pagina == $i ? 'active' : '') . "'><a class='page-link pageButton' href='?pagina=$i'>$i</a></li>";
-                                            }
-                                            if ($fin < $totalPaginas) {
-                                                if ($fin < $totalPaginas - 1) {
-                                                    echo "<li class='page-item'><span class='page-link'>...</span></li>";
-                                                }
-                                                echo "<li class='page-item'><a class='page-link pageButton' href='?pagina=$totalPaginas'>$totalPaginas</a></li>";
-                                            }
-                                            if ($pagina < $totalPaginas) {
-                                                echo "<li class='page-item'><a class='page-link' id='nextPage' href='?pagina=" . ($pagina + 1) . "'>Siguiente</a></li>";
+                                        // Verificar si hay tickets activos
+                                        if (empty($tickets)) {
+                                            echo "<p>No hay tickets activos en este momento.</p>";
+                                        } else {
+                                            // Mostrar la lista de tickets activos
+                                            echo "<div id='activeTickets' style='margin-top: 10px;'>";
+                                            echo "<ul>";
+                                            foreach ($tickets as $ticket) {
+                                                echo "<li>{$ticket['id_Ticket']}</li>";
                                             }
                                             echo "</ul>";
-                                            echo "</div>";
+
+                                            // Calcular el número total de páginas
+                                            $result = $mysqli->query("SELECT COUNT(*) AS total FROM tickets WHERE status = 1");
+                                            $totalRegistros = $result->fetch_assoc()['total'];
+                                            $totalPaginas = ceil($totalRegistros / $ticketsPorPagina);
+
+                                            // Definir cuántas páginas mostrar antes y después de la página actual
+                                            $paginasMostradas = 2; // Puedes ajustar este valor según tus necesidades
+
+                                            // Calcular el rango de páginas a mostrar
+                                            $inicio = max(1, $pagina - $paginasMostradas);
+                                            $fin = min($totalPaginas, $pagina + $paginasMostradas);
+
+                                            // Mostrar botones de paginación si hay más de una página
+                                            if ($totalPaginas > 1) {
+                                                echo "<div class='text-center'>";
+                                                echo "<ul class='pagination'>";
+                                                if ($pagina > 1) {
+                                                    echo "<li class='page-item'><a class='page-link' id='previousPage' href='?pagina=" . ($pagina - 1) . "'>Anterior</a></li>";
+                                                }
+                                                if ($inicio > 1) {
+                                                    echo "<li class='page-item'><a class='page-link pageButton' href='?pagina=1'>1</a></li>";
+                                                    if ($inicio > 2) {
+                                                        echo "<li class='page-item'><span class='page-link'>...</span></li>";
+                                                    }
+                                                }
+                                                for ($i = $inicio; $i <= $fin; $i++) {
+                                                    echo "<li class='page-item " . ($pagina == $i ? 'active' : '') . "'><a class='page-link pageButton' href='?pagina=$i'>$i</a></li>";
+                                                }
+                                                if ($fin < $totalPaginas) {
+                                                    if ($fin < $totalPaginas - 1) {
+                                                        echo "<li class='page-item'><span class='page-link'>...</span></li>";
+                                                    }
+                                                    echo "<li class='page-item'><a class='page-link pageButton' href='?pagina=$totalPaginas'>$totalPaginas</a></li>";
+                                                }
+                                                if ($pagina < $totalPaginas) {
+                                                    echo "<li class='page-item'><a class='page-link' id='nextPage' href='?pagina=" . ($pagina + 1) . "'>Siguiente</a></li>";
+                                                }
+                                                echo "</ul>";
+                                                echo "</div>";
+                                            }
+                                            echo "</div>"; // Cierre de activeTickets
                                         }
-                                    ?>
+                                        ?>
+                                    </div>
                                 </div>
                             </div>
                                 
@@ -512,6 +517,8 @@ function registrarTicket() {
         success: function (response) {
             console.log("Respuesta del servidor recibida:", response);
             mostrarModal(response);
+            // Redirigir a otra página después de completar con éxito la solicitud
+            
         },
         error: function (xhr, status, error) {
             console.log('Error en la solicitud AJAX:');
@@ -530,11 +537,15 @@ function mostrarModal(response) {
             icon: 'error'
         });
     } else {
-        // Si no hay error, mostrar los datos del ticket
+        // Si no hay error, mostrar los datos del ticket y recargar la página después de aceptar el modal
         Swal.fire({
             title: 'Información del Ticket',
             html: `Ticket número: ${response.id_Ticket}<br>Hora Entrada: ${response.hr_Ent}`,
             icon: 'success'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.reload(); // Recargar la página después de aceptar el modal
+            }
         });
     }
 }
